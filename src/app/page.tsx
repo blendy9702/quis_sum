@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <div>
-      <span>퀴스 숨 이란?</span>
+      <div className="bg-[#ffb8b8] h-[800px] w-[410px]"></div>
     </div>
   );
 }
