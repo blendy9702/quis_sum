@@ -1,26 +1,34 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { questionDummy } from "./data/qusitonDummy";
 
 export default function Home() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<
+    Array<{ text: string; quote: string }>
+  >([]);
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<{
+    text: string;
+    quote: string;
+  } | null>(null);
 
-  const questions = [
-    {
-      question: "당신은 어떤 성격을 가지고 있나요?",
-      options: ["내향적", "외향적"],
-    },
-    {
-      question: "주말에 무엇을 하시나요?",
-      options: ["집에서 휴식", "외부 활동"],
-    },
-  ];
+  const questions = questionDummy;
 
-  const handleAnswer = (answer: string) => {
-    setAnswers([...answers, answer]);
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+  const handleAnswer = (answer: { text: string; quote: string }) => {
+    setSelectedAnswer(answer);
+    setSelectedQuote(answer.quote);
+  };
+
+  const handleNext = () => {
+    if (selectedAnswer) {
+      setAnswers([...answers, selectedAnswer]);
+      setSelectedQuote(null);
+      setSelectedAnswer(null);
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      }
     }
   };
 
@@ -83,12 +91,36 @@ export default function Home() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(option)}
-                      className='w-full p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all'
+                      className={`w-full p-4 rounded-lg transition-all ${
+                        selectedAnswer?.text === option.text
+                          ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
+                          : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
+                      }`}
                     >
-                      {option}
+                      {option.text}
                     </motion.button>
                   ))}
                 </div>
+                <AnimatePresence>
+                  {selectedQuote && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className='mt-6 p-4 bg-white/80 rounded-lg text-center'
+                    >
+                      <p className='text-gray-700 italic'>{selectedQuote}</p>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleNext}
+                        className='mt-4 px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all'
+                      >
+                        다음
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             ) : (
               <motion.div
@@ -107,7 +139,7 @@ export default function Home() {
                       transition={{ delay: index * 0.1 }}
                       className='mb-2'
                     >
-                      {questions[index].question}: {answer}
+                      {questions[index].question}: {answer.text}
                     </motion.li>
                   ))}
                 </ul>
