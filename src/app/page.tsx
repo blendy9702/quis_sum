@@ -32,6 +32,98 @@ export default function Home() {
     }
   };
 
+  // 애니메이션 variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const questionVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -30,
+      scale: 0.9,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
+
+  const optionVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring" as const,
+        stiffness: 200,
+        damping: 20,
+      },
+    },
+    exit: {
+      opacity: 0,
+      x: 50,
+      scale: 0.8,
+      transition: {
+        duration: 0.2,
+      },
+    },
+    selected: {
+      scale: 1.05,
+      boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+      transition: {
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
+
+  const quoteVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 15,
+        delay: 0.3,
+      },
+    },
+  };
+
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: 0.5,
+        type: "spring" as const,
+        stiffness: 200,
+      },
+    },
+  };
+
   return (
     <div className='min-h-screen h-full relative overflow-hidden'>
       <motion.div
@@ -68,55 +160,109 @@ export default function Home() {
       />
       <div className='relative min-h-screen flex items-center justify-center p-4'>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className='bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-lg max-w-md w-full'
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+          }}
+          className='bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-md w-full border border-white/20'
         >
           <AnimatePresence mode='wait'>
             {currentQuestion < questions.length ? (
               <motion.div
                 key={currentQuestion}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
+                variants={containerVariants}
+                initial='hidden'
+                animate='visible'
+                exit='exit'
+                className='space-y-6'
               >
-                <h2 className='text-2xl font-bold mb-6 text-center'>
+                <motion.h2
+                  variants={questionVariants}
+                  className='text-2xl font-bold text-center text-gray-800 leading-tight'
+                >
                   {questions[currentQuestion].question}
-                </h2>
-                <div className='space-y-4'>
+                </motion.h2>
+
+                <motion.div variants={containerVariants} className='space-y-4'>
                   {questions[currentQuestion].options.map((option, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleAnswer(option)}
-                      className={`w-full p-4 rounded-lg transition-all ${
-                        selectedAnswer?.text === option.text
-                          ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white"
-                          : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-                      }`}
-                    >
-                      {option.text}
-                    </motion.button>
+                    <AnimatePresence key={index}>
+                      {(!selectedAnswer ||
+                        selectedAnswer.text === option.text) && (
+                        <motion.button
+                          variants={optionVariants}
+                          initial='hidden'
+                          animate={
+                            selectedAnswer?.text === option.text
+                              ? "selected"
+                              : "visible"
+                          }
+                          exit='exit'
+                          whileHover={{
+                            scale: 1.02,
+                            boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleAnswer(option)}
+                          className={`w-full p-4 rounded-xl transition-all transform ${
+                            selectedAnswer?.text === option.text
+                              ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg"
+                              : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md"
+                          }`}
+                        >
+                          <motion.span
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                          >
+                            {option.text}
+                          </motion.span>
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
                   ))}
-                </div>
+                </motion.div>
+
                 <AnimatePresence>
                   {selectedQuote && (
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className='mt-6 p-4 bg-white/80 rounded-lg text-center'
+                      variants={quoteVariants}
+                      initial='hidden'
+                      animate='visible'
+                      className='mt-6 p-6 bg-gradient-to-r from-yellow-100 via-orange-50 to-yellow-100 rounded-xl border-l-4 border-orange-400 shadow-lg'
                     >
-                      <p className='text-gray-700 italic'>{selectedQuote}</p>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleNext}
-                        className='mt-4 px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all'
+                      <motion.p
+                        className='text-gray-800 italic text-center text-lg leading-relaxed'
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
                       >
-                        다음
+                        &ldquo;{selectedQuote}&rdquo;
+                      </motion.p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {selectedQuote && (
+                    <motion.div
+                      variants={buttonVariants}
+                      initial='hidden'
+                      animate='visible'
+                      className='text-center'
+                    >
+                      <motion.button
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: "0 15px 30px rgba(0,0,0,0.2)",
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleNext}
+                        className='px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium shadow-lg'
+                      >
+                        다음 질문
                       </motion.button>
                     </motion.div>
                   )}
@@ -126,23 +272,48 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className='text-center'
+                transition={{
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15,
+                }}
+                className='text-center space-y-6'
               >
-                <h2 className='text-2xl font-bold mb-4'>결과</h2>
-                <p>선택한 답변들:</p>
-                <ul className='mt-4'>
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className='text-3xl font-bold text-gray-800'
+                >
+                  결과
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className='text-gray-600'
+                >
+                  선택한 답변들:
+                </motion.p>
+                <motion.ul
+                  className='space-y-3'
+                  variants={containerVariants}
+                  initial='hidden'
+                  animate='visible'
+                >
                   {answers.map((answer, index) => (
                     <motion.li
                       key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className='mb-2'
+                      variants={optionVariants}
+                      className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200'
                     >
-                      {questions[index].question}: {answer.text}
+                      <span className='font-medium text-gray-700'>
+                        {questions[index].question}:
+                      </span>{" "}
+                      <span className='text-gray-600'>{answer.text}</span>
                     </motion.li>
                   ))}
-                </ul>
+                </motion.ul>
               </motion.div>
             )}
           </AnimatePresence>
