@@ -96,34 +96,6 @@ export default function Home() {
     },
   };
 
-  const quoteVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-        delay: 0.3,
-      },
-    },
-  };
-
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.5,
-        type: "spring" as const,
-        stiffness: 200,
-      },
-    },
-  };
-
   return (
     <div className='min-h-screen h-full relative overflow-hidden'>
       <motion.div
@@ -228,42 +200,66 @@ export default function Home() {
                 <AnimatePresence>
                   {selectedQuote && (
                     <motion.div
-                      variants={quoteVariants}
-                      initial='hidden'
-                      animate='visible'
-                      className='mt-6 p-6 bg-gradient-to-r from-yellow-100 via-orange-50 to-yellow-100 rounded-xl border-l-4 border-orange-400 shadow-lg'
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className='fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4'
                     >
-                      <motion.p
-                        className='text-gray-800 italic text-center text-lg leading-relaxed'
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                      >
-                        &ldquo;{selectedQuote}&rdquo;
-                      </motion.p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <AnimatePresence>
-                  {selectedQuote && (
-                    <motion.div
-                      variants={buttonVariants}
-                      initial='hidden'
-                      animate='visible'
-                      className='text-center'
-                    >
-                      <motion.button
-                        whileHover={{
-                          scale: 1.05,
-                          boxShadow: "0 15px 30px rgba(0,0,0,0.2)",
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 50 }}
+                        transition={{
+                          type: "spring" as const,
+                          stiffness: 200,
+                          damping: 25,
                         }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleNext}
-                        className='px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium shadow-lg'
+                        className='bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-white/20'
                       >
-                        다음 질문
-                      </motion.button>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 }}
+                          className='text-center space-y-6'
+                        >
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{
+                              delay: 0.3,
+                              type: "spring" as const,
+                              stiffness: 200,
+                            }}
+                            className='w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto'
+                          >
+                            <span className='text-2xl'>💬</span>
+                          </motion.div>
+
+                          <motion.p
+                            className='text-gray-800 italic text-xl leading-relaxed'
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                          >
+                            &ldquo;{selectedQuote}&rdquo;
+                          </motion.p>
+
+                          <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            whileHover={{
+                              scale: 1.05,
+                              boxShadow: "0 15px 30px rgba(0,0,0,0.2)",
+                            }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleNext}
+                            className='px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium shadow-lg'
+                          >
+                            다음 질문
+                          </motion.button>
+                        </motion.div>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
