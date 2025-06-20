@@ -1,36 +1,65 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { questionDummy } from "./data/qusitonDummy";
+import { getResultFeedback } from "./data/resultFeedback";
 
 export default function Home() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<
-    Array<{ text: string; quote: string }>
+    Array<{ text: string; score: number }>
   >([]);
-  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<{
     text: string;
-    quote: string;
+    score: number;
   } | null>(null);
 
   const questions = questionDummy;
 
-  const handleAnswer = (answer: { text: string; quote: string }) => {
-    setSelectedAnswer(answer);
-    setSelectedQuote(answer.quote);
+  // 각 질문에 대한 선택지 생성
+  const generateOptions = () => {
+    return [
+      {
+        text: "그렇다",
+        score: 3,
+      },
+      {
+        text: "보통이다",
+        score: 2,
+      },
+      {
+        text: "아니다",
+        score: 1,
+      },
+    ];
   };
 
-  const handleNext = () => {
-    if (selectedAnswer) {
-      setAnswers([...answers, selectedAnswer]);
-      setSelectedQuote(null);
-      setSelectedAnswer(null);
-      if (currentQuestion < questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      }
-    }
+  const handleAnswer = (answer: { text: string; score: number }) => {
+    setSelectedAnswer(answer);
+    // 즉시 다음 질문으로 넘어가기
+    setAnswers([...answers, answer]);
+    setCurrentQuestion(currentQuestion + 1);
+    setSelectedAnswer(null);
   };
+
+  // 질문이 바뀔 때 selectedAnswer 초기화
+  useEffect(() => {
+    setSelectedAnswer(null);
+  }, [currentQuestion]);
+
+  // 총점 계산
+  const calculateTotalScore = () => {
+    return answers.reduce((total, answer) => total + answer.score, 0);
+  };
+
+  // 결과 피드백 가져오기
+  const getResult = () => {
+    const totalScore = calculateTotalScore();
+    return getResultFeedback(totalScore);
+  };
+
+  // 진행률 계산
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   // 애니메이션 variants
   const containerVariants = {
@@ -42,7 +71,7 @@ export default function Home() {
         delayChildren: 0.2,
       },
     },
-  };
+  };  
 
   const questionVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.9 },
@@ -135,12 +164,38 @@ export default function Home() {
           initial={{ opacity: 0, y: 20, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{
-            type: "spring",
+            type: "spring" as const,
             stiffness: 100,
             damping: 20,
           }}
           className='bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-md w-full border border-white/20'
         >
+          {/* 진행률 게이지 - 질문 진행 중에만 표시 */}
+          {currentQuestion < questions.length && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className='mb-6'
+            >
+              <div className='flex justify-between items-center mb-2'>
+                <span className='text-sm font-medium text-gray-600'>
+                  진행률
+                </span>
+                <span className='text-sm font-medium text-gray-600'>
+                  {currentQuestion + 1} / {questions.length}
+                </span>
+              </div>
+              <div className='w-full bg-gray-200 rounded-full h-2'>
+                <motion.div
+                  className='bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full'
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              </div>
+            </motion.div>
+          )}
+
           <AnimatePresence mode='wait'>
             {currentQuestion < questions.length ? (
               <motion.div
@@ -159,7 +214,7 @@ export default function Home() {
                 </motion.h2>
 
                 <motion.div variants={containerVariants} className='space-y-4'>
-                  {questions[currentQuestion].options.map((option, index) => (
+                  {generateOptions().map((option, index) => (
                     <AnimatePresence key={index}>
                       {(!selectedAnswer ||
                         selectedAnswer.text === option.text) && (
@@ -196,120 +251,132 @@ export default function Home() {
                     </AnimatePresence>
                   ))}
                 </motion.div>
-
-                <AnimatePresence>
-                  {selectedQuote && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className='fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4'
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                        transition={{
-                          type: "spring" as const,
-                          stiffness: 200,
-                          damping: 25,
-                        }}
-                        className='bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-white/20'
-                      >
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className='text-center space-y-6'
-                        >
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{
-                              delay: 0.3,
-                              type: "spring" as const,
-                              stiffness: 200,
-                            }}
-                            className='w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto'
-                          >
-                            <span className='text-2xl'>💬</span>
-                          </motion.div>
-
-                          <motion.p
-                            className='text-gray-800 italic text-xl leading-relaxed'
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4 }}
-                          >
-                            &ldquo;{selectedQuote}&rdquo;
-                          </motion.p>
-
-                          <motion.button
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5 }}
-                            whileHover={{
-                              scale: 1.05,
-                              boxShadow: "0 15px 30px rgba(0,0,0,0.2)",
-                            }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={handleNext}
-                            className='px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium shadow-lg'
-                          >
-                            다음 질문
-                          </motion.button>
-                        </motion.div>
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </motion.div>
             ) : (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
-                  type: "spring",
+                  type: "spring" as const,
                   stiffness: 100,
                   damping: 15,
                 }}
                 className='text-center space-y-6'
               >
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className='text-3xl font-bold text-gray-800'
-                >
-                  결과
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className='text-gray-600'
-                >
-                  선택한 답변들:
-                </motion.p>
-                <motion.ul
-                  className='space-y-3'
-                  variants={containerVariants}
-                  initial='hidden'
-                  animate='visible'
-                >
-                  {answers.map((answer, index) => (
-                    <motion.li
-                      key={index}
-                      variants={optionVariants}
-                      className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200'
-                    >
-                      <span className='font-medium text-gray-700'>
-                        {questions[index].question}:
-                      </span>{" "}
-                      <span className='text-gray-600'>{answer.text}</span>
-                    </motion.li>
-                  ))}
-                </motion.ul>
+                {(() => {
+                  const result = getResult();
+                  const totalScore = calculateTotalScore();
+                  const maxScore = 21;
+                  const percentage = Math.round((totalScore / maxScore) * 100);
+
+                  return (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className='space-y-4'
+                      >
+                        <h2 className='text-3xl font-bold text-gray-800'>
+                          {result.title}
+                        </h2>
+
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{
+                            delay: 0.4,
+                            type: "spring" as const,
+                            stiffness: 200,
+                          }}
+                          className='w-24 h-24 mx-auto bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-4xl'
+                        >
+                          🎯
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.6 }}
+                          className='space-y-2'
+                        >
+                          <div className='text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+                            {totalScore} / {maxScore}
+                          </div>
+                          <div className='text-lg text-gray-600'>
+                            {percentage}점
+                          </div>
+                          <div className='text-sm text-gray-500'>
+                            레벨: {result.level}
+                          </div>
+                        </motion.div>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                        className='space-y-4'
+                      >
+                        <div
+                          className={`p-6 rounded-2xl bg-gradient-to-r ${result.color} text-white shadow-lg`}
+                        >
+                          <p className='text-lg leading-relaxed'>
+                            {result.description}
+                          </p>
+                        </div>
+
+                        <div className='p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-200'>
+                          <h3 className='font-semibold text-gray-800 mb-2'>
+                            💡 조언
+                          </h3>
+                          <p className='text-gray-700 leading-relaxed'>
+                            {result.advice}
+                          </p>
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.0 }}
+                        className='space-y-4'
+                      >
+                        <h3 className='text-xl font-semibold text-gray-800'>
+                          📝 선택한 답변들
+                        </h3>
+                        <motion.ul
+                          className='space-y-3'
+                          variants={containerVariants}
+                          initial='hidden'
+                          animate='visible'
+                        >
+                          {answers.map((answer, index) => (
+                            <motion.li
+                              key={index}
+                              variants={optionVariants}
+                              className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200'
+                            >
+                              <div className='flex justify-between items-start'>
+                                <div className='flex-1'>
+                                  <span className='font-medium text-gray-700'>
+                                    {questions[index].question}:
+                                  </span>{" "}
+                                  <span className='text-gray-600'>
+                                    {answer.text}
+                                  </span>
+                                </div>
+                                <span className='ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
+                                  {answer.score}점
+                                </span>
+                              </div>
+                            </motion.li>
+                          ))}
+                        </motion.ul>
+                      </motion.div>
+                    </>
+                  );
+                })()}
               </motion.div>
             )}
           </AnimatePresence>

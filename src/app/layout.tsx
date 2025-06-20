@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang='ko'>
       <body className='antialiased flex flex-col min-h-screen'>
-        <Header />
+        {/* <Header /> */}
         <div className='max-w-[1200px] mx-auto'>{children}</div>
         {/* <Footer /> */}
       </body>
