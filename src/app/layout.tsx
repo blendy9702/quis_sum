@@ -1,5 +1,3 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -24,10 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='ko'>
-      <body className='antialiased flex flex-col min-h-screen'>
+    <html lang="ko">
+      <body className="antialiased flex flex-col min-h-screen">
         {/* <Header /> */}
-        <div className='max-w-[1200px] mx-auto'>{children}</div>
+        <div className="max-w-[1200px] mx-auto">{children}</div>
         {/* <Footer /> */}
       </body>
     </html>
