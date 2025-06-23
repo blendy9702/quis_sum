@@ -26,3 +26,25 @@ body {
   overflow-x: hidden;
   /* overflow-y: hidden; */
 }
+
+/* 모바일 뷰포트 높이 문제 해결 */
+html,
+body {
+  height: 100%;
+  height: 100dvh;
+  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
+  height: 100dvh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+/* iOS Safari에서 주소창 숨김/표시 시 높이 조정 */
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: -webkit-fill-available;
+  }
+}
