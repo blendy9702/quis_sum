@@ -5,6 +5,7 @@ import { questionDummy } from "./data/qusitonDummy";
 import { getResultFeedback } from "./data/resultFeedback";
 
 export default function Home() {
+  const [isStarted, setIsStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<
     Array<{ text: string; score: number }>
@@ -191,7 +192,7 @@ export default function Home() {
           className='bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-md w-full border border-white/20 max-h-[90vh] overflow-y-auto'
         >
           {/* 진행률 게이지 - 질문 진행 중에만 표시 */}
-          {currentQuestion < questions.length && (
+          {isStarted && currentQuestion < questions.length && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -217,7 +218,139 @@ export default function Home() {
           )}
 
           <AnimatePresence mode='wait'>
-            {currentQuestion < questions.length ? (
+            {!isStarted ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{
+                  type: "spring" as const,
+                  stiffness: 100,
+                  damping: 15,
+                }}
+                className='text-center space-y-8'
+              >
+                <motion.div
+                  initial={{ y: -50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className='space-y-4'
+                >
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                    className='w-32 h-32 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-6xl shadow-2xl'
+                  >
+                    🎯
+                  </motion.div>
+                  <motion.h1
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                    className='text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'
+                  >
+                    퀴즈 썸머
+                  </motion.h1>
+                  <motion.p
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                    className='text-lg text-gray-600 leading-relaxed'
+                  >
+                    당신의 지식을 테스트해보세요!
+                    <br />
+                    재미있는 퀴즈로 실력을 확인해보세요.
+                  </motion.p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                  className='space-y-4'
+                >
+                  <motion.button
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsStarted(true)}
+                    className='w-full py-4 px-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300'
+                  >
+                    <motion.span
+                      animate={{
+                        x: [0, 5, 0],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
+                    >
+                      🚀 시작하기
+                    </motion.span>
+                  </motion.button>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.2 }}
+                    className='flex justify-center space-x-4 text-sm text-gray-500'
+                  >
+                    <motion.div
+                      animate={{
+                        y: [0, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: 0,
+                      }}
+                      className='flex items-center space-x-1'
+                    >
+                      <span>📝</span>
+                      <span>7문제</span>
+                    </motion.div>
+                    <motion.div
+                      animate={{
+                        y: [0, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: 0.5,
+                      }}
+                      className='flex items-center space-x-1'
+                    >
+                      <span>⏱️</span>
+                      <span>3분</span>
+                    </motion.div>
+                    <motion.div
+                      animate={{
+                        y: [0, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: 1,
+                      }}
+                      className='flex items-center space-x-1'
+                    >
+                      <span>🎯</span>
+                      <span>점수</span>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            ) : currentQuestion < questions.length ? (
               <motion.div
                 key={currentQuestion}
                 variants={containerVariants}
@@ -393,6 +526,41 @@ export default function Home() {
                             </motion.li>
                           ))}
                         </motion.ul>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.2 }}
+                        className='space-y-4'
+                      >
+                        <motion.button
+                          whileHover={{
+                            scale: 1.05,
+                            boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                          }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setIsStarted(false);
+                            setCurrentQuestion(0);
+                            setAnswers([]);
+                            setSelectedAnswer(null);
+                          }}
+                          className='w-full py-4 px-8 bg-gradient-to-r from-green-500 to-green-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300'
+                        >
+                          <motion.span
+                            animate={{
+                              rotate: [0, 5, -5, 0],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              repeatType: "reverse",
+                            }}
+                          >
+                            🔄 다시 시작하기
+                          </motion.span>
+                        </motion.button>
                       </motion.div>
                     </>
                   );
