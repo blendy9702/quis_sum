@@ -114,19 +114,18 @@ export default function Home() {
   };
 
   const optionVariants = {
-    hidden: { opacity: 0, x: -50 },
+    hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,
-      x: 0,
+      scale: 1,
       transition: {
-        type: "spring" as const,
-        stiffness: 200,
-        damping: 20,
+        type: "spring",
+        stiffness: 500,
+        damping: 15,
       },
     },
     exit: {
       opacity: 0,
-      x: 50,
       scale: 0.8,
       transition: {
         duration: 0.2,
@@ -136,7 +135,7 @@ export default function Home() {
       scale: 1.05,
       boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
       transition: {
-        type: "spring" as const,
+        type: "spring",
         stiffness: 300,
         damping: 20,
       },
@@ -145,11 +144,11 @@ export default function Home() {
 
   return (
     <div
-      className='h-screen h-[100dvh] relative overflow-hidden'
+      className="h-[100dvh] relative overflow-hidden"
       style={{ height: "calc(var(--vh, 1vh) * 100)" }}
     >
       <motion.div
-        className='absolute inset-0'
+        className="absolute inset-0"
         animate={{
           background: [
             "linear-gradient(45deg, #ff6b6b, #4ecdc4)",
@@ -165,7 +164,7 @@ export default function Home() {
         }}
       />
       <motion.div
-        className='absolute inset-0'
+        className="absolute inset-0"
         animate={{
           background: [
             "radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1) 0%, transparent 50%)",
@@ -180,7 +179,7 @@ export default function Home() {
           repeatType: "reverse",
         }}
       />
-      <div className='relative h-full flex items-center justify-center p-4'>
+      <div className="relative h-full flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -189,26 +188,26 @@ export default function Home() {
             stiffness: 100,
             damping: 20,
           }}
-          className='bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-md w-full border border-white/20 max-h-[90vh] overflow-y-auto'
+          className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-md w-full border border-white/20 max-h-[90vh] overflow-y-auto"
         >
           {/* 진행률 게이지 - 질문 진행 중에만 표시 */}
           {isStarted && currentQuestion < questions.length && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className='mb-6'
+              className="mb-6"
             >
-              <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm font-medium text-gray-600'>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-600">
                   진행률
                 </span>
-                <span className='text-sm font-medium text-gray-600'>
+                <span className="text-sm font-medium text-gray-600">
                   {currentQuestion + 1} / {questions.length}
                 </span>
               </div>
-              <div className='w-full bg-gray-200 rounded-full h-2'>
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <motion.div
-                  className='bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full'
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
@@ -217,7 +216,7 @@ export default function Home() {
             </motion.div>
           )}
 
-          <AnimatePresence mode='wait'>
+          <AnimatePresence mode="wait">
             {!isStarted ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -228,13 +227,13 @@ export default function Home() {
                   stiffness: 100,
                   damping: 15,
                 }}
-                className='text-center space-y-8'
+                className="text-center space-y-8"
               >
                 <motion.div
                   initial={{ y: -50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className='space-y-4'
+                  className="space-y-4"
                 >
                   <motion.div
                     animate={{
@@ -246,7 +245,7 @@ export default function Home() {
                       repeat: Infinity,
                       repeatType: "reverse",
                     }}
-                    className='w-32 h-32 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-6xl shadow-2xl'
+                    className="w-32 h-32 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-6xl shadow-2xl"
                   >
                     🎯
                   </motion.div>
@@ -254,7 +253,7 @@ export default function Home() {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
-                    className='text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'
+                    className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
                   >
                     퀴즈 썸머
                   </motion.h1>
@@ -262,11 +261,11 @@ export default function Home() {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
-                    className='text-lg text-gray-600 leading-relaxed'
+                    className="text-lg text-gray-600 leading-relaxed"
                   >
-                    당신의 지식을 테스트해보세요!
+                    AI를 얼마나 잘 이해하고 있는지
                     <br />
-                    재미있는 퀴즈로 실력을 확인해보세요.
+                    7문항의 간단한 테스트로 확인해 보세요.
                   </motion.p>
                 </motion.div>
 
@@ -274,7 +273,7 @@ export default function Home() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
-                  className='space-y-4'
+                  className="space-y-4"
                 >
                   <motion.button
                     whileHover={{
@@ -283,7 +282,7 @@ export default function Home() {
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsStarted(true)}
-                    className='w-full py-4 px-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300'
+                    className="w-full py-4 px-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
                   >
                     <motion.span
                       animate={{
@@ -303,7 +302,7 @@ export default function Home() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 }}
-                    className='flex justify-center space-x-4 text-sm text-gray-500'
+                    className="flex justify-center space-x-4 text-sm text-gray-500"
                   >
                     <motion.div
                       animate={{
@@ -314,7 +313,7 @@ export default function Home() {
                         repeat: Infinity,
                         delay: 0,
                       }}
-                      className='flex items-center space-x-1'
+                      className="flex items-center space-x-1"
                     >
                       <span>📝</span>
                       <span>7문제</span>
@@ -328,7 +327,7 @@ export default function Home() {
                         repeat: Infinity,
                         delay: 0.5,
                       }}
-                      className='flex items-center space-x-1'
+                      className="flex items-center space-x-1"
                     >
                       <span>⏱️</span>
                       <span>3분</span>
@@ -342,7 +341,7 @@ export default function Home() {
                         repeat: Infinity,
                         delay: 1,
                       }}
-                      className='flex items-center space-x-1'
+                      className="flex items-center space-x-1"
                     >
                       <span>🎯</span>
                       <span>점수</span>
@@ -354,32 +353,32 @@ export default function Home() {
               <motion.div
                 key={currentQuestion}
                 variants={containerVariants}
-                initial='hidden'
-                animate='visible'
-                exit='exit'
-                className='space-y-6'
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="space-y-6"
               >
                 <motion.h2
                   variants={questionVariants}
-                  className='text-2xl font-bold text-center text-gray-800 leading-tight'
+                  className="text-2xl font-bold text-center text-gray-800 leading-tight"
                 >
                   {questions[currentQuestion].question}
                 </motion.h2>
 
-                <motion.div variants={containerVariants} className='space-y-4'>
+                <motion.div variants={containerVariants} className="space-y-4">
                   {generateOptions().map((option, index) => (
                     <AnimatePresence key={index}>
                       {(!selectedAnswer ||
                         selectedAnswer.text === option.text) && (
                         <motion.button
                           variants={optionVariants}
-                          initial='hidden'
+                          initial="hidden"
                           animate={
                             selectedAnswer?.text === option.text
                               ? "selected"
                               : "visible"
                           }
-                          exit='exit'
+                          exit="exit"
                           whileHover={{
                             scale: 1.02,
                             boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
@@ -414,7 +413,7 @@ export default function Home() {
                   stiffness: 100,
                   damping: 15,
                 }}
-                className='text-center space-y-6'
+                className="text-center space-y-6"
               >
                 {(() => {
                   const result = getResult();
@@ -428,9 +427,9 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className='space-y-4'
+                        className="space-y-4"
                       >
-                        <h2 className='text-3xl font-bold text-gray-800'>
+                        <h2 className="text-3xl font-bold text-gray-800">
                           {result.title}
                         </h2>
 
@@ -442,7 +441,7 @@ export default function Home() {
                             type: "spring" as const,
                             stiffness: 200,
                           }}
-                          className='w-24 h-24 mx-auto bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-4xl'
+                          className="w-24 h-24 mx-auto bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-4xl"
                         >
                           🎯
                         </motion.div>
@@ -451,15 +450,15 @@ export default function Home() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.6 }}
-                          className='space-y-2'
+                          className="space-y-2"
                         >
-                          <div className='text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+                          <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             {totalScore} / {maxScore}
                           </div>
-                          <div className='text-lg text-gray-600'>
+                          <div className="text-lg text-gray-600">
                             {percentage}점
                           </div>
-                          <div className='text-sm text-gray-500'>
+                          <div className="text-sm text-gray-500">
                             레벨: {result.level}
                           </div>
                         </motion.div>
@@ -469,21 +468,21 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.8 }}
-                        className='space-y-4'
+                        className="space-y-4"
                       >
                         <div
                           className={`p-6 rounded-2xl bg-gradient-to-r ${result.color} text-white shadow-lg`}
                         >
-                          <p className='text-lg leading-relaxed'>
+                          <p className="text-lg leading-relaxed">
                             {result.description}
                           </p>
                         </div>
 
-                        <div className='p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-200'>
-                          <h3 className='font-semibold text-gray-800 mb-2'>
+                        <div className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-200">
+                          <h3 className="font-semibold text-gray-800 mb-2">
                             💡 조언
                           </h3>
-                          <p className='text-gray-700 leading-relaxed'>
+                          <p className="text-gray-700 leading-relaxed">
                             {result.advice}
                           </p>
                         </div>
@@ -493,33 +492,33 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0 }}
-                        className='space-y-4'
+                        className="space-y-4"
                       >
-                        <h3 className='text-xl font-semibold text-gray-800'>
+                        <h3 className="text-xl font-semibold text-gray-800">
                           📝 선택한 답변들
                         </h3>
                         <motion.ul
-                          className='space-y-3'
+                          className="space-y-3"
                           variants={containerVariants}
-                          initial='hidden'
-                          animate='visible'
+                          initial="hidden"
+                          animate="visible"
                         >
                           {answers.map((answer, index) => (
                             <motion.li
                               key={index}
                               variants={optionVariants}
-                              className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200'
+                              className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200"
                             >
-                              <div className='flex justify-between items-start'>
-                                <div className='flex-1'>
-                                  <span className='font-medium text-gray-700'>
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <span className="font-medium text-gray-700">
                                     {questions[index].question}:
                                   </span>{" "}
-                                  <span className='text-gray-600'>
+                                  <span className="text-gray-600">
                                     {answer.text}
                                   </span>
                                 </div>
-                                <span className='ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
+                                <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                   {answer.score}점
                                 </span>
                               </div>
@@ -532,7 +531,7 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.2 }}
-                        className='space-y-4'
+                        className="space-y-4"
                       >
                         <motion.button
                           whileHover={{
@@ -546,7 +545,7 @@ export default function Home() {
                             setAnswers([]);
                             setSelectedAnswer(null);
                           }}
-                          className='w-full py-4 px-8 bg-gradient-to-r from-green-500 to-green-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300'
+                          className="w-full py-4 px-8 bg-gradient-to-r from-green-500 to-green-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300"
                         >
                           <motion.span
                             animate={{
