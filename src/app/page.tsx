@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { questionDummy } from "./data/qusitonDummy";
 import { getResultFeedback } from "./data/resultFeedback";
 
@@ -113,15 +113,15 @@ export default function Home() {
     },
   };
 
-  const optionVariants = {
+  const optionVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        type: "spring",
-        stiffness: 500,
-        damping: 15,
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 10,
       },
     },
     exit: {
@@ -135,7 +135,7 @@ export default function Home() {
       scale: 1.05,
       boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 20,
       },
